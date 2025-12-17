@@ -6,7 +6,7 @@ import { SymbolRegistry } from "../core/symbolRegistry.js";
 export type AppContext = {
   bus: TypedBus<AppEvents>;
   opps: OppsStore;
-  symbols: SymbolRegistry; // NEW
+  symbols: SymbolRegistry;
 };
 
 export function buildContext(): AppContext {

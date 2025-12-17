@@ -11,23 +11,27 @@ export function registerRoutes(app: FastifyInstance) {
   });
 
   app.get("/stream/opps", async (req, reply) => {
+    // ✅ CORS — REQUIRED for EventSource
+    reply.raw.setHeader("Access-Control-Allow-Origin", "*");
+    reply.raw.setHeader("Access-Control-Allow-Methods", "GET");
+    reply.raw.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    // SSE headers
     reply.raw.setHeader("Content-Type", "text/event-stream");
     reply.raw.setHeader("Cache-Control", "no-cache, no-transform");
     reply.raw.setHeader("Connection", "keep-alive");
 
-    // Optional but helpful with some proxies:
-    // reply.raw.setHeader("X-Accel-Buffering", "no");
+    reply.hijack();
+    reply.raw.flushHeaders?.();
 
-    // Send current snapshot immediately
+    // Initial snapshot
     const snap = app.ctx.opps.getSnapshot();
     sseWrite(reply.raw, "snapshot", snap);
 
-    // Subscribe to updates
     const unsubscribe = app.ctx.bus.on("opps:update", (payload) => {
       sseWrite(reply.raw, "opps", payload);
     });
 
-    // Heartbeat keeps connection alive through some proxies
     const heartbeat = setInterval(() => {
       sseWrite(reply.raw, "ping", { t: Date.now() });
     }, 15_000);
@@ -37,4 +41,5 @@ export function registerRoutes(app: FastifyInstance) {
       unsubscribe();
     });
   });
+
 }
