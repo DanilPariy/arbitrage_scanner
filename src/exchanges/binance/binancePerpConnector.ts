@@ -2,7 +2,7 @@ import WebSocket from "ws";
 import type { ExchangeConnector, ConnectorState } from "../connector.js";
 import type { TypedBus } from "../../streams/bus.js";
 import type { AppEvents } from "../../streams/events.js";
-import type { TopOfBook } from "../marketTypes.js";
+import { parseBinanceUsdMPerpSymbol } from "../../core/symbols.js";
 
 type CombinedStreamMsg = {
   stream: string;
@@ -117,27 +117,29 @@ export class BinancePerpConnector implements ExchangeConnector<AppEvents> {
   }
 
   private handleBookTicker(data: BinanceBookTicker) {
-    if (!this.bus) return;
-    if (!data?.s) return;
+  if (!this.bus) return;
+  if (!data?.s) return;
 
-    const bidPrice = toNum(data.b);
-    const bidQty = toNum(data.B);
-    const askPrice = toNum(data.a);
-    const askQty = toNum(data.A);
-    const ts = typeof data.E === "number" ? data.E : Date.now();
+  const parsed = parseBinanceUsdMPerpSymbol(data.s);
+  if (!parsed) return; // ignore unknown symbols (or log later)
 
-    if (![bidPrice, bidQty, askPrice, askQty].every(Number.isFinite)) return;
+  const bidPrice = toNum(data.b);
+  const bidQty = toNum(data.B);
+  const askPrice = toNum(data.a);
+  const askQty = toNum(data.A);
+  const ts = typeof data.E === "number" ? data.E : Date.now();
 
-    const top: TopOfBook = {
-      exchange: "binance",
-      symbol: data.s, // Binance futures uses "BTCUSDT" style; normalize later
-      bidPrice,
-      bidQty,
-      askPrice,
-      askQty,
-      ts
-    };
+  if (![bidPrice, bidQty, askPrice, askQty].every(Number.isFinite)) return;
 
-    this.bus.emit("market:top", top);
-  }
+  this.bus.emit("market:top", {
+    exchange: "binance",
+    symbol: parsed.canonical,     // ✅ normalized
+    exchangeSymbol: data.s,       // ✅ raw
+    bidPrice,
+    bidQty,
+    askPrice,
+    askQty,
+    ts
+  });
+}
 }

@@ -1,28 +1,22 @@
 import type { ExchangeId } from "./types.js";
 import type { TopOfBook } from "../exchanges/marketTypes.js";
-
-type ExSymKey = `${ExchangeId}::${string}`;
+import type { CanonicalSymbol } from "./symbols.js";
 
 export class MarketState {
-  // store latest quote by exchange+symbol
-  private tops = new Map<ExSymKey, TopOfBook>();
+  // Map<canonicalSymbol, Map<exchange, TopOfBook>>
+  private bySymbol = new Map<CanonicalSymbol, Map<ExchangeId, TopOfBook>>();
 
   upsertTop(top: TopOfBook) {
-    const key: ExSymKey = `${top.exchange}::${top.symbol}`;
-    this.tops.set(key, top);
-  }
-
-  getTop(exchange: ExchangeId, symbol: string): TopOfBook | undefined {
-    const key: ExSymKey = `${exchange}::${symbol}`;
-    return this.tops.get(key);
-  }
-
-  // return all exchanges that currently have a top-of-book for this symbol
-  getTopsForSymbol(symbol: string): TopOfBook[] {
-    const out: TopOfBook[] = [];
-    for (const v of this.tops.values()) {
-      if (v.symbol === symbol) out.push(v);
+    let m = this.bySymbol.get(top.symbol);
+    if (!m) {
+      m = new Map();
+      this.bySymbol.set(top.symbol, m);
     }
-    return out;
+    m.set(top.exchange, top);
+  }
+
+  getTopsForSymbol(symbol: CanonicalSymbol): TopOfBook[] {
+    const m = this.bySymbol.get(symbol);
+    return m ? Array.from(m.values()) : [];
   }
 }

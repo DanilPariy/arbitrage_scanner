@@ -1,13 +1,16 @@
 import type { ExchangeId } from "../core/types.js";
-
-export type NormalizedSymbol = string; // you decide convention later, e.g. "BTCUSDT" or "BTC-USDT"
+import type { CanonicalSymbol } from "../core/symbols.js";
 
 export type TopOfBook = {
   exchange: ExchangeId;
-  symbol: NormalizedSymbol;
+
+  // NEW:
+  symbol: CanonicalSymbol;      // normalized, used by engine/state
+  exchangeSymbol: string;       // raw exchange symbol (for debugging / UI)
+
   bidPrice: number;
   bidQty: number;
   askPrice: number;
   askQty: number;
-  ts: number; // event time (epoch ms)
+  ts: number;
 };
