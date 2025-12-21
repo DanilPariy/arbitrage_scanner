@@ -4,6 +4,7 @@ import type { PerpOpportunity, ExchangeId } from "./types.js";
 import type { TopOfBook } from "../exchanges/marketTypes.js";
 import { MarketState } from "./marketState.js";
 import { estimateRoundTripFeesBps } from "./fees.js";
+import { FundingStore } from "./fundingStore.js";
 
 export type ArbEngineConfig = {
   minNetEdgeBps: number;
@@ -18,6 +19,12 @@ export type ArbEngineConfig = {
 
 type AliveKey = string;
 
+function fundingImpactBps(rate: number, position: "long" | "short") {
+  const bps = rate * 10_000;
+  // fundingRate > 0 means longs pay, shorts receive
+  return position === "long" ? bps : -bps;
+}
+
 export class ArbEngine {
   private state = new MarketState();
   private aliveSince = new Map<AliveKey, number>();
@@ -31,7 +38,8 @@ export class ArbEngine {
 
   constructor(
     private bus: TypedBus<AppEvents>,
-    private cfg: ArbEngineConfig
+    private cfg: ArbEngineConfig,
+    private funding?: FundingStore
   ) {}
 
   start(): () => void {
@@ -134,6 +142,20 @@ export class ArbEngine {
           continue;
         }
 
+        const longF = this.funding?.get(long.exchange as ExchangeId, long.symbol);
+        const shortF = this.funding?.get(short.exchange as ExchangeId, short.symbol);
+
+        const longRate = longF?.rate ?? null;
+        const longTime = longF?.nextFundingTime ?? null;
+        const shortRate = shortF?.rate ?? null;
+        const shortTime = shortF?.nextFundingTime ?? null;
+
+        let netAfterFundingBps: number | null = null;
+        if (longRate !== null && shortRate !== null) {
+          const impact = fundingImpactBps(longRate, "long") + fundingImpactBps(shortRate, "short");
+          netAfterFundingBps = netEdgeBps - impact;
+        }
+
         const opp: PerpOpportunity = {
           id,
           symbol: long.symbol,
@@ -147,7 +169,12 @@ export class ArbEngine {
           longTopQty: long.askQty,
           shortTopQty: short.bidQty,
           observedAt: now,
-          timeAliveMs
+          timeAliveMs,
+          longFundingRate: longRate,
+          longNextFundingTime: longTime,
+          shortFundingRate: shortRate,
+          shortNextFundingTime: shortTime,
+          netAfterFundingBps
         };
 
         this.oppsById.set(id, opp);

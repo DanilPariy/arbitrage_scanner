@@ -13,6 +13,15 @@ export type PerpOpportunity = {
   estFeesBps: number;         // sum of taker fees (or maker if you do passive)
   netEdgeBps: number;         // gross - fees - buffers
 
+  // funding for next settlement
+  longFundingRate: number | null;      // decimal rate, e.g. 0.0001
+  longNextFundingTime: number | null;  // epoch ms
+  shortFundingRate: number | null;
+  shortNextFundingTime: number | null;
+
+  // netEdge adjusted by funding (in bps)
+  netAfterFundingBps: number | null;
+
   // liquidity filters (later filled from depth)
   longTopQty?: number;
   shortTopQty?: number;

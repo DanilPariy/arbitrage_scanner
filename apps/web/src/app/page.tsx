@@ -27,6 +27,28 @@ function ageMs(ts: number) {
   return `${m}m`;
 }
 
+function fmtBpsFromRate(rate: number | null) {
+  if (rate === null) return "—";
+  return (rate * 10_000).toFixed(2);
+}
+
+function fmtTime(ts: number | null) {
+  if (!ts) return "—";
+
+  const d = ts - Date.now();
+  if (d <= 0) return "due";
+
+  const totalSeconds = Math.floor(d / 1000);
+
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
 export default function Page() {
   const [data, setData] = useState<OppsUpdate>({ top: [], updatedAt: 0 });
   const [lastPing, setLastPing] = useState<number | null>(null);
@@ -61,6 +83,17 @@ export default function Page() {
       { header: "Gross bps", accessorKey: "grossSpreadBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
       { header: "Fees bps", accessorKey: "estFeesBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
       { header: "Net bps", accessorKey: "netEdgeBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
+      
+      { header: "Long FR (bps)", id: "lfr", cell: (ctx) => fmtBpsFromRate(ctx.row.original.longFundingRate) },
+      { header: "Long FR in", id: "lft", cell: (ctx) => fmtTime(ctx.row.original.longNextFundingTime) },
+
+      { header: "Short FR (bps)", id: "sfr", cell: (ctx) => fmtBpsFromRate(ctx.row.original.shortFundingRate) },
+      { header: "Short FR in", id: "sft", cell: (ctx) => fmtTime(ctx.row.original.shortNextFundingTime) },
+
+      { header: "Net+Funding (bps)", accessorKey: "netAfterFundingBps", cell: (ctx) => {
+          const v = ctx.getValue<number | null>();
+          return v === null ? "—" : v.toFixed(2);
+      }},
 
       { header: "Alive", accessorKey: "timeAliveMs", cell: (ctx) => `${Math.floor(ctx.getValue<number>() / 1000)}s` },
       { header: "Seen", accessorKey: "observedAt", cell: (ctx) => ageMs(ctx.getValue<number>()) }
