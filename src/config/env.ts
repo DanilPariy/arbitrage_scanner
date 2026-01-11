@@ -6,7 +6,9 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   HOST: z.string().default("0.0.0.0"),
   OKX_WS_URL: z.string().default("wss://ws.okx.com:8443/ws/v5/public"),
-  OKX_INST_IDS: z.string().default("BTC-USDT-SWAP,ETH-USDT-SWAP")
+  OKX_INST_IDS: z.string().default("BTC-USDT-SWAP,ETH-USDT-SWAP"),
+  BYBIT_REST_BASE_URL: z.string().default("https://api.bybit.com"),
+  BYBIT_WS_URL: z.string().default("wss://stream.bybit.com/v5/public/linear")
 });
 
 export type Env = z.infer<typeof EnvSchema>;

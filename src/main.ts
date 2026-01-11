@@ -6,6 +6,8 @@ import { OkxPerpManager } from "./exchanges/okx/okxPerpManager.js";
 import { FundingTracker } from "./core/fundingTracker.js";
 import { BinanceFundingPoller } from "./exchanges/binance/binanceFundingPoller.js";
 import { OkxFundingPoller } from "./exchanges/okx/okxFundingPoller.js";
+import { BybitPerpManager } from "./exchanges/bybit/bybitPerpManager.js";
+import { BybitFundingPoller } from "./exchanges/bybit/bybitFundingPoller.js";
 
 const app = await buildApp();
 
@@ -29,6 +31,22 @@ const okxMgr = new OkxPerpManager({
 });
 await okxMgr.start(app.ctx.bus);
 
+const bybitMgr = new BybitPerpManager({
+  restBaseUrl: env.BYBIT_REST_BASE_URL,
+  wsUrl: env.BYBIT_WS_URL,
+  quote: "USDT",
+
+  minTurnover24h: 1_000_000,
+  maxInstruments: 800,
+
+  maxWsConnections: 4,
+  perConnectionInstruments: 200,
+
+  subscribeChunkSize: 100,
+  subscribeDelayMs: 350
+});
+await bybitMgr.start(app.ctx.bus);
+
 const fundingTracker = new FundingTracker(app.ctx.bus, app.log);
 fundingTracker.start();
 
@@ -47,6 +65,14 @@ const okxFunding = new OkxFundingPoller(app.ctx.bus, app.ctx.symbols, app.log, {
   nearPollMs: 10_000
 });
 okxFunding.start();
+
+const bybitFunding = new BybitFundingPoller(app.ctx.bus, app.ctx.symbols, app.log, {
+  restBaseUrl: env.BYBIT_REST_BASE_URL,
+  normalPollMs: 60_000,
+  nearFundingMs: 10 * 60_000,
+  nearPollMs: 10_000
+});
+bybitFunding.start();
 
 // start arb engine
 const engine = new ArbEngine(app.ctx.bus, {
