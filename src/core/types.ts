@@ -1,4 +1,4 @@
-export type ExchangeId = "binance" | "bybit" | "okx" | "htx" | "kucoin";
+export type ExchangeId = "binance" | "bybit" | "okx" | "bitget" | "htx" | "kucoin";
 
 export type PerpOpportunity = {
   id: string;                 // stable unique id (ex: "SOL-USDT:binance-bybit")

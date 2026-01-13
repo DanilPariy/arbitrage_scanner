@@ -7,7 +7,8 @@ export const takerFeeBps: Record<ExchangeId, number> = {
   bybit: 6,   // placeholder
   okx: 5,     // placeholder
   htx: 6,     // placeholder
-  kucoin: 6   // placeholder
+  kucoin: 6,   // placeholder
+  bitget: 6
 };
 
 // round-trip taker fees: you pay taker on BOTH legs (buy+sell)

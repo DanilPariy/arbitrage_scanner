@@ -8,6 +8,8 @@ import { BinanceFundingPoller } from "./exchanges/binance/binanceFundingPoller.j
 import { OkxFundingPoller } from "./exchanges/okx/okxFundingPoller.js";
 import { BybitPerpManager } from "./exchanges/bybit/bybitPerpManager.js";
 import { BybitFundingPoller } from "./exchanges/bybit/bybitFundingPoller.js";
+import { BitgetPerpManager } from "./exchanges/bitget/bitgetPerpManager.js";
+import { BitgetFundingPoller } from "./exchanges/bitget/bitgetFundingPoller.js";
 
 const app = await buildApp();
 
@@ -47,6 +49,23 @@ const bybitMgr = new BybitPerpManager({
 });
 await bybitMgr.start(app.ctx.bus);
 
+const bitgetMgr = new BitgetPerpManager({
+  restBaseUrl: env.BITGET_REST_BASE_URL,
+  wsUrl: env.BITGET_WS_URL,
+  quote: "USDT",
+  productType: "USDT-FUTURES",
+
+  minTurnover24h: 1_000_000,
+  maxInstruments: 800,
+
+  maxWsConnections: 4,
+  perConnectionInstruments: 200,
+
+  subscribeChunkSize: 100,
+  subscribeDelayMs: 350
+});
+await bitgetMgr.start(app.ctx.bus);
+
 const fundingTracker = new FundingTracker(app.ctx.bus, app.log);
 fundingTracker.start();
 
@@ -73,6 +92,15 @@ const bybitFunding = new BybitFundingPoller(app.ctx.bus, app.ctx.symbols, app.lo
   nearPollMs: 10_000
 });
 bybitFunding.start();
+
+const bitgetFunding = new BitgetFundingPoller(app.ctx.bus, app.ctx.symbols, app.log, {
+  restBaseUrl: env.BITGET_REST_BASE_URL,
+  productType: "USDT-FUTURES",
+  normalPollMs: 60_000,
+  nearFundingMs: 10 * 60_000,
+  nearPollMs: 10_000
+});
+bitgetFunding.start();
 
 // start arb engine
 const engine = new ArbEngine(app.ctx.bus, {
