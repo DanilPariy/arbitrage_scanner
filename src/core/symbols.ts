@@ -66,3 +66,15 @@ export function parseBybitPerpSymbol(exchangeSymbol: string): ParsedSymbol | nul
   // same suffix logic works for common linear symbols
   return parseBinanceUsdMPerpSymbol(exchangeSymbol);
 }
+
+/**
+ * Bitget perps appear as:
+ * - linear USDT: "BTCUSDT"
+ * - mix/contract: "BTCUSDT_UMCBL"
+ * Strip any suffix and reuse suffix parsing.
+ */
+export function parseBitgetPerpSymbol(exchangeSymbol: string): ParsedSymbol | null {
+  const s = exchangeSymbol.toUpperCase().trim();
+  const basePart = s.split("_")[0] ?? s;
+  return parseBinanceUsdMPerpSymbol(basePart);
+}
