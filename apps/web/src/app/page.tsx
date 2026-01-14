@@ -52,6 +52,8 @@ function fmtTime(ts: number | null) {
 export default function Page() {
   const [data, setData] = useState<OppsUpdate>({ top: [], updatedAt: 0 });
   const [lastPing, setLastPing] = useState<number | null>(null);
+  const [symbolFilter, setSymbolFilter] = useState("");
+  const [exchangeFilter, setExchangeFilter] = useState<string[]>([]);
 
   const { status } = useSse<SseEvents>(`${API_BASE}/stream/opps`, {
     snapshot: (d) => setData(d),
@@ -62,6 +64,30 @@ export default function Page() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "netEdgeBps", desc: true }
   ]);
+
+  const exchanges = useMemo(() => {
+    const set = new Set<string>();
+    for (const opp of data.top) {
+      set.add(opp.longExchange);
+      set.add(opp.shortExchange);
+    }
+    return Array.from(set).sort();
+  }, [data.top]);
+
+  const filteredData = useMemo(() => {
+    const symbolNeedle = symbolFilter.trim().toUpperCase();
+    const exchangeSet = new Set(exchangeFilter);
+
+    return data.top.filter((opp) => {
+      if (symbolNeedle && !opp.symbol.toUpperCase().includes(symbolNeedle)) return false;
+
+      if (exchangeSet.size > 0) {
+        if (!exchangeSet.has(opp.longExchange) && !exchangeSet.has(opp.shortExchange)) return false;
+      }
+
+      return true;
+    });
+  }, [data.top, symbolFilter, exchangeFilter]);
 
   const columns = useMemo<ColumnDef<PerpOpportunity>[]>(
     () => [
@@ -102,7 +128,7 @@ export default function Page() {
   );
 
   const table = useReactTable({
-    data: data.top,
+    data: filteredData,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
@@ -117,7 +143,51 @@ export default function Page() {
         <span>status: <b>{status}</b></span>
         <span>updatedAt: <b>{data.updatedAt ? ageMs(data.updatedAt) : "—"}</b></span>
         <span>ping: <b>{lastPing ? ageMs(lastPing) : "—"}</b></span>
-        <span>rows: <b>{data.top.length}</b></span>
+        <span>rows: <b>{filteredData.length}</b> / {data.top.length}</span>
+      </div>
+
+      <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap", marginBottom: 12 }}>
+        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <span>Symbol</span>
+          <input
+            value={symbolFilter}
+            onChange={(e) => setSymbolFilter(e.target.value)}
+            placeholder="BTC, ETH, SOL..."
+            style={{ padding: "6px 8px", border: "1px solid #ddd", borderRadius: 6, minWidth: 180 }}
+          />
+        </label>
+
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+          <span>Exchanges</span>
+          {exchanges.map((ex) => {
+            const checked = exchangeFilter.includes(ex);
+            return (
+              <label key={ex} style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(e) => {
+                    setExchangeFilter((prev) => {
+                      if (e.target.checked) return Array.from(new Set([...prev, ex]));
+                      return prev.filter((x) => x !== ex);
+                    });
+                  }}
+                />
+                <span>{ex}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        <button
+          onClick={() => {
+            setSymbolFilter("");
+            setExchangeFilter([]);
+          }}
+          style={{ padding: "6px 10px", border: "1px solid #ddd", borderRadius: 6, background: "#f8f8f8" }}
+        >
+          Clear
+        </button>
       </div>
 
       <div style={{ overflowX: "auto", border: "1px solid #ddd", borderRadius: 8 }}>
