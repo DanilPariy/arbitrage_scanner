@@ -8,7 +8,11 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js",
     "lint": "eslint .",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "typecheck:backend": "tsc -p tsconfig.json --noEmit",
+    "typecheck:frontend": "tsc -p apps/web/tsconfig.json --noEmit",
+    "typecheck": "npm run typecheck:backend && npm run typecheck:frontend",
+    "typecheck:watch": "node scripts/typecheck-watch.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",

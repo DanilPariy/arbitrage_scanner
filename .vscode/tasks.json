@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "typecheck: backend (watch)",
+      "type": "shell",
+      "command": "npm run typecheck:backend -- --watch --preserveWatchOutput",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false
+      }
+    },
+    {
+      "label": "typecheck: frontend (watch)",
+      "type": "shell",
+      "command": "npm run typecheck:frontend -- --watch --preserveWatchOutput",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false
+      }
+    },
+    {
+      "label": "typecheck: all (watch)",
+      "dependsOn": [
+        "typecheck: backend (watch)",
+        "typecheck: frontend (watch)"
+      ],
+      "dependsOrder": "parallel",
+      "group": "build",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

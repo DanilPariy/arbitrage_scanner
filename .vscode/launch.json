@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch TS (tsx) Debug",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "node",
+            "runtimeArgs": ["--inspect=9229", "--enable-source-maps"],
+            "program": "${workspaceFolder}/node_modules/tsx/dist/cli.mjs",
+            "args": ["src/main.ts"],
+            "console": "integratedTerminal",
+            "outputCapture": "std",
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ]
+}
