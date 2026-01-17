@@ -1,5 +1,6 @@
 import type { TypedBus } from "../../streams/bus.js";
 import type { AppEvents } from "../../streams/events.js";
+import type { LoggerLike } from "../../core/symbolRegistry.js";
 import { discoverOkxUsdtSwaps } from "./okxDiscovery.js";
 import { OkxPerpConnector } from "./okxPerpConnector.js";
 
@@ -13,6 +14,7 @@ export type OkxManagerConfig = {
   restBaseUrl: string;       // "https://www.okx.com"
   wsUrl: string;             // "wss://ws.okx.com:8443/ws/v5/public"
   quote: "USDT";
+  log?: LoggerLike;
 
   minVolCcy24h: number;      // liquidity filter (USDT)
   maxInstruments: number;    // cap universe size
@@ -45,7 +47,8 @@ export class OkxPerpManager {
           url: this.cfg.wsUrl,
           instIds: g,
           subscribeChunkSize: this.cfg.subscribeChunkSize,
-          subscribeDelayMs: this.cfg.subscribeDelayMs
+          subscribeDelayMs: this.cfg.subscribeDelayMs,
+          ...(this.cfg.log ? { log: this.cfg.log } : {})
         })
     );
 

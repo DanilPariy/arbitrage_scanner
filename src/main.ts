@@ -21,6 +21,7 @@ const okxMgr = new OkxPerpManager({
   restBaseUrl: "https://www.okx.com",
   wsUrl: env.OKX_WS_URL,
   quote: "USDT",
+  log: app.log,
 
   minVolCcy24h: 1_000_000,
   maxInstruments: 800,
@@ -54,6 +55,7 @@ const bitgetMgr = new BitgetPerpManager({
   wsUrl: env.BITGET_WS_URL,
   quote: "USDT",
   productType: "USDT-FUTURES",
+  log: app.log,
 
   minTurnover24h: 1_000_000,
   maxInstruments: 800,

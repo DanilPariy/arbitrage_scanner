@@ -1,5 +1,6 @@
 import type { TypedBus } from "../../streams/bus.js";
 import type { AppEvents } from "../../streams/events.js";
+import type { LoggerLike } from "../../core/symbolRegistry.js";
 import { discoverBitgetUsdtPerps } from "./bitgetDiscovery.js";
 import { BitgetPerpConnector } from "./bitgetPerpConnector.js";
 
@@ -14,6 +15,7 @@ export type BitgetManagerConfig = {
   wsUrl: string;             // "wss://ws.bitget.com/v2/ws/public"
   quote: "USDT";
   productType: string;       // e.g. "USDT-FUTURES" or "UMCBL"
+  log?: LoggerLike;
 
   minTurnover24h: number;    // liquidity filter (USDT)
   maxInstruments: number;    // cap universe size
@@ -48,7 +50,8 @@ export class BitgetPerpManager {
           productType: this.cfg.productType,
           symbols: g,
           subscribeChunkSize: this.cfg.subscribeChunkSize,
-          subscribeDelayMs: this.cfg.subscribeDelayMs
+          subscribeDelayMs: this.cfg.subscribeDelayMs,
+          ...(this.cfg.log ? { log: this.cfg.log } : {})
         })
     );
 
