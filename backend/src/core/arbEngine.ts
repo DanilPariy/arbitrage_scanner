@@ -1,6 +1,6 @@
 import type { TypedBus } from "../streams/bus.js";
 import type { AppEvents } from "../streams/events.js";
-import type { PerpOpportunity, ExchangeId } from "./types.js";
+import type { PerpOpportunity, ExchangeId } from "../../../shared/types.js";
 import type { TopOfBook } from "../exchanges/marketTypes.js";
 import { MarketState } from "./marketState.js";
 import { estimateRoundTripFeesBps } from "./fees.js";

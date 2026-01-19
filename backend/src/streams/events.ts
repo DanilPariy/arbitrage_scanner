@@ -1,5 +1,5 @@
-import type { PerpOpportunity } from "../core/types.js";
-import type { ExchangeId } from "../core/types.js";
+import type { PerpOpportunity } from "../../../shared/types.js";
+import type { ExchangeId } from "../../../shared/types.js";
 import type { CanonicalSymbol } from "../core/symbols.js";
 import type { TopOfBook } from "../exchanges/marketTypes.js";
 

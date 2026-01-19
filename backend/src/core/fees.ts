@@ -1,4 +1,4 @@
-import type { ExchangeId } from "./types.js";
+import type { ExchangeId } from "../../../shared/types.js";
 
 // Keep as config constants for now.
 // Later: make it per VIP level, maker/taker, funding, etc.
