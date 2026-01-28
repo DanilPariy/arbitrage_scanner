@@ -1,6 +1,6 @@
 import type { TypedBus } from "../streams/bus.js";
 import type { AppEvents } from "../streams/events.js";
-import type { ExchangeId, PerpOpportunity } from "./types.js";
+import type { ExchangeId, PerpOpportunity } from "../../../shared/types.js";
 import type { CanonicalSymbol } from "./symbols.js";
 import type { SymbolRegistry, LoggerLike } from "./symbolRegistry.js";
 import { sleep } from "./sleep.js";

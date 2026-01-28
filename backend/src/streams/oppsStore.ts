@@ -1,6 +1,6 @@
 import type { AppEvents } from "./events.js";
 import { TypedBus } from "./bus.js";
-import type { PerpOpportunity } from "../core/types.js";
+import type { PerpOpportunity } from "../../../shared/types.js";
 
 export class OppsStore {
   private bus: TypedBus<AppEvents>;

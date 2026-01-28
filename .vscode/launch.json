@@ -2,12 +2,33 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Backend: Dev Server",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "Frontend: Dev Server",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}/frontend",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
             "name": "Launch TS (tsx) Debug",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "node",
             "runtimeArgs": ["--inspect=9229", "--enable-source-maps"],
-            "program": "${workspaceFolder}/node_modules/tsx/dist/cli.mjs",
+            "cwd": "${workspaceFolder}/backend",
+            "program": "${workspaceFolder}/backend/node_modules/tsx/dist/cli.mjs",
             "args": ["src/main.ts"],
             "console": "integratedTerminal",
             "outputCapture": "std",

@@ -1,4 +1,4 @@
-import type { ExchangeId } from "../core/types.js";
+import type { ExchangeId } from "../../../shared/types.js";
 import type { CanonicalSymbol } from "../core/symbols.js";
 
 export type TopOfBook = {

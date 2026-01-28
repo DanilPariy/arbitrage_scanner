@@ -1,28 +1,30 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `src/` contains the backend TypeScript service (Fastify server, exchange connectors, arbitrage engine).
-- `apps/web/` contains the Next.js frontend (app router, UI, public assets).
-- `apps/web/src/` is the main UI source; `apps/web/public/` holds static assets.
-- Configuration lives in `src/config/` and environment files like `apps/web/.env.local`.
+- `backend/src/` contains the backend TypeScript service (Fastify server, exchange connectors, arbitrage engine).
+- `frontend/` contains the Next.js frontend (app router, UI, public assets).
+- `frontend/src/` is the main UI source; `frontend/public/` holds static assets.
+- `shared/` hosts types shared by backend and frontend.
+- Configuration lives in `backend/src/config/` and environment files like `frontend/.env.local`.
 
 ## Build, Test, and Development Commands
-Backend (run from repo root):
-- `npm run dev` — start the backend in watch mode (`src/main.ts`).
-- `npm run build` — compile TypeScript to `dist/`.
-- `npm run start` — run the compiled backend (`dist/main.js`).
-- `npm run lint` — lint the backend codebase.
-- `npm run format` — format with Prettier.
+Backend (run from `backend/`):
+- `npm run dev` - start the backend in watch mode (`src/main.ts`).
+- `npm run build` - compile TypeScript to `dist/`.
+- `npm run start` - run the compiled backend (`dist/backend/src/main.js`).
+- `npm run lint` - lint the backend codebase.
+- `npm run format` - format with Prettier.
 
-Frontend (run from `apps/web/`):
-- `npm run dev` — start Next.js dev server.
-- `npm run build` — build the production bundle.
-- `npm run start` — serve the production build.
-- `npm run lint` — lint the frontend.
+Frontend (run from `frontend/`):
+- `npm run dev` - start Next.js dev server.
+- `npm run build` - build the production bundle.
+- `npm run start` - serve the production build.
+- `npm run lint` - lint the frontend.
+- `npm run typecheck` - run the frontend TypeScript typecheck.
 
 ## Coding Style & Naming Conventions
 - TypeScript throughout; prefer explicit types at module boundaries.
-- Formatting is handled by Prettier (root) and linted by ESLint (root and `apps/web/`).
+- Formatting is handled by Prettier (backend) and linted by ESLint (backend and frontend).
 - Use clear, domain-specific names for exchange adapters and streams (e.g., `binance`, `okx`).
 
 ## Testing Guidelines
@@ -36,4 +38,4 @@ Frontend (run from `apps/web/`):
 
 ## Security & Configuration Tips
 - Keep secrets in local env files (`.env`, `.env.local`) and out of version control.
-- Review `.gitignore` in both root and `apps/web/` before adding new files.
+- Review `.gitignore` in both root and `frontend/` before adding new files.

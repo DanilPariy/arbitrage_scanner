@@ -57,7 +57,7 @@ const backend = runProcess("backend", "tsc", [
 
 const frontend = runProcess("frontend", "tsc", [
   "-p",
-  "apps/web/tsconfig.json",
+  "../frontend/tsconfig.json",
   "--noEmit",
   "--watch",
   "--preserveWatchOutput"

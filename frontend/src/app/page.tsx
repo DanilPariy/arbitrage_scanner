@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useSse } from "../lib/useSse";
-import type { OppsUpdate, PerpOpportunity, SseEvents } from "../lib/types";
+import type { OppsUpdate, PerpOpportunity, SseEvents } from "@shared/types";
 import {
   ColumnDef,
   flexRender,
