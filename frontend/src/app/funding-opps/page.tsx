@@ -117,6 +117,7 @@ export default function Page() {
       { header: "Short FR in", id: "sft", cell: (ctx) => fmtTime(ctx.row.original.shortNextFundingTime) },
 
       { header: "Funding edge (bps)", accessorKey: "fundingEdgeBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
+      { header: "Spread (bps)", accessorKey: "spreadBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
       { header: "Entry cost (bps)", accessorKey: "entryCostBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
 
       { header: "Alive", accessorKey: "timeAliveMs", cell: (ctx) => `${Math.floor(ctx.getValue<number>() / 1000)}s` },

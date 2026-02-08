@@ -54,6 +54,7 @@ export type FundingOpportunity = {
 
   // edge and cost (bps)
   fundingEdgeBps: number; // (shortRate - longRate) * 10_000
+  spreadBps: number; // (shortPrice - longPrice) / mid * 10_000
   entryCostBps: number; // max(0, (longPrice - shortPrice)/mid * 10_000)
 
   // liquidity filters

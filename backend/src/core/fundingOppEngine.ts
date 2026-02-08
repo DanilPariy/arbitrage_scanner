@@ -118,6 +118,7 @@ export class FundingOppEngine {
         const longPrice = long.askPrice;
         const shortPrice = short.bidPrice;
         const mid = (longPrice + shortPrice) / 2;
+        const spreadBps = ((shortPrice - longPrice) / mid) * 10_000;
         const entryCostBps = Math.max(0, ((longPrice - shortPrice) / mid) * 10_000);
         if (entryCostBps > fundingEdgeBps) {
           this.resetAlive(this.makeId(symbol, long.exchange, short.exchange));
@@ -141,6 +142,7 @@ export class FundingOppEngine {
           shortFundingRate: shortRate,
           shortNextFundingTime: shortF.nextFundingTime,
           fundingEdgeBps,
+          spreadBps,
           entryCostBps,
           longTopQty: long.askQty,
           shortTopQty: short.bidQty,
