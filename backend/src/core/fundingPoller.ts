@@ -1,6 +1,6 @@
 import type { TypedBus } from "../streams/bus.js";
 import type { AppEvents } from "../streams/events.js";
-import type { ExchangeId, PerpOpportunity } from "../../../shared/types.js";
+import type { ExchangeId } from "../../../shared/types.js";
 import type { CanonicalSymbol } from "./symbols.js";
 import type { SymbolRegistry, LoggerLike } from "./symbolRegistry.js";
 import { sleep } from "./sleep.js";
@@ -26,10 +26,6 @@ export abstract class FundingPoller {
   ) {}
 
   start() {
-    this.bus.on("opps:update", ({ top }) => {
-      this.refreshWanted(top);
-    });
-
     this.running = true;
     void this.loop();
   }
@@ -40,21 +36,18 @@ export abstract class FundingPoller {
 
   protected abstract fetchFunding(exchangeSymbol: string): Promise<{ rate: number; nextFundingTime: number }>;
 
-  private refreshWanted(top: PerpOpportunity[]) {
-    for (const opp of top) {
-      const sym = opp.symbol as CanonicalSymbol;
+  private refreshWantedFromSymbols() {
+    const canonicals = this.symbols.getCanonicalsForExchange(this.cfg.exchange);
+    if (canonicals.length === 0) return;
 
-      if (opp.longExchange === this.cfg.exchange) {
-        this.wanted.set(`${opp.longExchange}::${sym}`, { exchange: this.cfg.exchange, symbol: sym });
-      }
-      if (opp.shortExchange === this.cfg.exchange) {
-        this.wanted.set(`${opp.shortExchange}::${sym}`, { exchange: this.cfg.exchange, symbol: sym });
-      }
+    for (const sym of canonicals) {
+      this.wanted.set(`${this.cfg.exchange}::${sym}`, { exchange: this.cfg.exchange, symbol: sym });
     }
   }
 
   private async loop() {
     while (this.running) {
+      this.refreshWantedFromSymbols();
       const now = Date.now();
 
       for (const item of this.wanted.values()) {

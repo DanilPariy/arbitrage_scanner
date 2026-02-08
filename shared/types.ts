@@ -37,8 +37,41 @@ export type PerpOpportunity = {
   timeAliveMs: number; // how long this opp has remained above threshold
 };
 
+export type FundingOpportunity = {
+  id: string; // stable unique id (ex: "SOL-USDT:binance-bybit")
+  symbol: string; // normalized symbol
+  longExchange: ExchangeId; // where you go long (pay/receive funding)
+  shortExchange: ExchangeId; // where you go short (pay/receive funding)
+
+  longPrice: number; // best ask used for entry cost
+  shortPrice: number; // best bid used for entry cost
+
+  // funding inputs
+  longFundingRate: number; // decimal rate
+  longNextFundingTime: number; // epoch ms
+  shortFundingRate: number; // decimal rate
+  shortNextFundingTime: number; // epoch ms
+
+  // edge and cost (bps)
+  fundingEdgeBps: number; // (shortRate - longRate) * 10_000
+  entryCostBps: number; // max(0, (longPrice - shortPrice)/mid * 10_000)
+
+  // liquidity filters
+  longTopQty?: number;
+  shortTopQty?: number;
+
+  // meta
+  observedAt: number; // epoch ms
+  timeAliveMs: number; // how long this opp has remained above threshold
+};
+
 export type OppsUpdate = {
   top: PerpOpportunity[];
+  updatedAt: number;
+};
+
+export type FundingOppsUpdate = {
+  top: FundingOpportunity[];
   updatedAt: number;
 };
 

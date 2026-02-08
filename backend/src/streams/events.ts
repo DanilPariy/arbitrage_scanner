@@ -1,4 +1,4 @@
-import type { PerpOpportunity } from "../../../shared/types.js";
+import type { PerpOpportunity, FundingOpportunity } from "../../../shared/types.js";
 import type { ExchangeId } from "../../../shared/types.js";
 import type { CanonicalSymbol } from "../core/symbols.js";
 import type { TopOfBook } from "../exchanges/marketTypes.js";
@@ -6,6 +6,11 @@ import type { TopOfBook } from "../exchanges/marketTypes.js";
 export type AppEvents = {
   "opps:update": {
     top: PerpOpportunity[];
+    updatedAt: number;
+  };
+
+  "funding:opps": {
+    top: FundingOpportunity[];
     updatedAt: number;
   };
 

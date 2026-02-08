@@ -90,6 +90,15 @@ export class SymbolRegistry {
     return m?.get(exchange);
   }
 
+  /** Returns canonicals observed for a given exchange */
+  getCanonicalsForExchange(exchange: ExchangeId): CanonicalSymbol[] {
+    const out: CanonicalSymbol[] = [];
+    for (const [canonical, m] of this.byCanonical.entries()) {
+      if (m.has(exchange)) out.push(canonical);
+    }
+    return out;
+  }
+
   /** Returns canonicals that exist on at least N exchanges (useful filter for arb universe) */
   getCanonicalsMinExchanges(min: number): CanonicalSymbol[] {
     const out: CanonicalSymbol[] = [];
