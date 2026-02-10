@@ -4,6 +4,7 @@ import { BinancePerpConnector } from "./exchanges/binance/binancePerpConnector.j
 import { ArbEngine } from "./core/arbEngine.js";
 import { OkxPerpManager } from "./exchanges/okx/okxPerpManager.js";
 import { FundingTracker } from "./core/fundingTracker.js";
+import { FundingOppEngine } from "./core/fundingOppEngine.js";
 import { BinanceFundingPoller } from "./exchanges/binance/binanceFundingPoller.js";
 import { OkxFundingPoller } from "./exchanges/okx/okxFundingPoller.js";
 import { BybitPerpManager } from "./exchanges/bybit/bybitPerpManager.js";
@@ -103,6 +104,17 @@ const bitgetFunding = new BitgetFundingPoller(app.ctx.bus, app.ctx.symbols, app.
   nearPollMs: 10_000
 });
 bitgetFunding.start();
+
+const fundingOpps = new FundingOppEngine(app.ctx.bus, {
+  minFundingEdgeBps: 2,
+  minTimeAliveMs: 1500,
+  minTopQty: 1,
+  maxOpps: 25,
+
+  publishIntervalMs: 300,
+  staleOppMs: 5000
+}, fundingTracker.getStore());
+fundingOpps.start();
 
 // start arb engine
 const engine = new ArbEngine(app.ctx.bus, {
