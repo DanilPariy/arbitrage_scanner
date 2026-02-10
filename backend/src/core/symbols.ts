@@ -1,3 +1,5 @@
+import { SYMBOL_BLACKLIST } from "../config/symbolBlacklist.js";
+
 export type CanonicalSymbol = `${string}-${string}-PERP`;
 
 export type ParsedSymbol = {
@@ -21,6 +23,10 @@ function makeCanonical(base: string, quote: string): CanonicalSymbol {
   return `${base}-${quote}-PERP`;
 }
 
+function isBlacklisted(canonical: CanonicalSymbol): boolean {
+  return SYMBOL_BLACKLIST.has(canonical);
+}
+
 /**
  * Binance USD-M futures perps typically send symbols like "BTCUSDT".
  * We split by known quote suffix.
@@ -32,7 +38,9 @@ export function parseBinanceUsdMPerpSymbol(exchangeSymbol: string): ParsedSymbol
     if (s.endsWith(q) && s.length > q.length) {
       const base = s.slice(0, -q.length);
       const quote = q;
-      return { base, quote, kind: "PERP", canonical: makeCanonical(base, quote) };
+      const canonical = makeCanonical(base, quote);
+      if (isBlacklisted(canonical)) return null;
+      return { base, quote, kind: "PERP", canonical };
     }
   }
 
@@ -53,7 +61,9 @@ export function parseOkxPerpSymbol(exchangeSymbol: string): ParsedSymbol | null 
   const quote = parts[1];
   if (!base || !quote) return null; // extra safety
 
-  return { base, quote, kind: "PERP", canonical: makeCanonical(base, quote) };
+  const canonical = makeCanonical(base, quote);
+  if (isBlacklisted(canonical)) return null;
+  return { base, quote, kind: "PERP", canonical };
 }
 
 /**
