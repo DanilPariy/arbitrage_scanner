@@ -10,6 +10,16 @@ export function registerRoutes(app: FastifyInstance) {
     return { ok: true };
   });
 
+  app.get("/api/opps", async () => {
+    const snap = app.ctx.opps.getSnapshot();
+    return { schemaVersion: 1, ...snap };
+  });
+
+  app.get("/api/funding-opps", async () => {
+    const snap = app.ctx.fundingOpps.getSnapshot();
+    return { schemaVersion: 1, ...snap };
+  });
+
   app.get("/stream/opps", async (req, reply) => {
     // ✅ CORS — REQUIRED for EventSource
     reply.raw.setHeader("Access-Control-Allow-Origin", "*");
