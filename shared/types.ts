@@ -33,7 +33,9 @@ export type PerpOpportunity = {
   shortTopQty?: number;
 
   // meta for ranking / stability
-  observedAt: number; // epoch ms
+  marketTs: number; // oldest exchange timestamp across both market-data legs
+  longMarketTs: number; // exchange timestamp for long top-of-book
+  shortMarketTs: number; // exchange timestamp for short top-of-book
   timeAliveMs: number; // how long this opp has remained above threshold
 };
 
@@ -62,7 +64,9 @@ export type FundingOpportunity = {
   shortTopQty?: number;
 
   // meta
-  observedAt: number; // epoch ms
+  marketTs: number; // oldest exchange timestamp across both market-data legs
+  longMarketTs: number; // exchange timestamp for long top-of-book
+  shortMarketTs: number; // exchange timestamp for short top-of-book
   timeAliveMs: number; // how long this opp has remained above threshold
 };
 

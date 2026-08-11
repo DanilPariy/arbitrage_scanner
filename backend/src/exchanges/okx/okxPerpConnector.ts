@@ -129,7 +129,8 @@ export class OkxPerpConnector {
         const askQty = toNum(d.askSz);
         const ts = toNum(d.ts);
 
-        if (![bidPrice, bidQty, askPrice, askQty, ts].every(Number.isFinite)) continue;
+        if (![bidPrice, bidQty, askPrice, askQty, ts].every(Number.isFinite))
+          continue;
 
         bus.emit("market:top", {
           exchange: "okx",

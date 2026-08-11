@@ -6,21 +6,23 @@ import { sleep } from "../../core/sleep.js";
 
 type BybitTickerMsg = {
   topic?: string;
-  data?: {
-    symbol?: string;
-    bid1Price?: string;
-    bid1Size?: string;
-    ask1Price?: string;
-    ask1Size?: string;
-    ts?: number;
-  } | Array<{
-    symbol?: string;
-    bid1Price?: string;
-    bid1Size?: string;
-    ask1Price?: string;
-    ask1Size?: string;
-    ts?: number;
-  }>;
+  type?: string;
+  ts?: number;
+  data?:
+    | {
+        symbol?: string;
+        bid1Price?: string;
+        bid1Size?: string;
+        ask1Price?: string;
+        ask1Size?: string;
+      }
+    | Array<{
+        symbol?: string;
+        bid1Price?: string;
+        bid1Size?: string;
+        ask1Price?: string;
+        ask1Size?: string;
+      }>;
   op?: string;
   args?: string[];
   success?: boolean;
@@ -75,8 +77,15 @@ export class BybitPerpConnector {
         return;
       }
 
-      if (!msg.topic?.startsWith("tickers.")) return;
-      if (!msg.data) return;
+      if (!msg.topic?.startsWith("tickers."))
+        return;
+      if (msg.type !== "snapshot")
+        return;
+      if (!msg.data)
+        return;
+
+      const ts = toNum(msg.ts);
+      if (!Number.isFinite(ts)) return;
 
       const rows = Array.isArray(msg.data) ? msg.data : [msg.data];
 
@@ -91,9 +100,9 @@ export class BybitPerpConnector {
         const bidQty = toNum(row.bid1Size);
         const askPrice = toNum(row.ask1Price);
         const askQty = toNum(row.ask1Size);
-        const ts = typeof row.ts === "number" ? row.ts : Date.now();
 
-        if (![bidPrice, bidQty, askPrice, askQty].every(Number.isFinite)) continue;
+        if (![bidPrice, bidQty, askPrice, askQty].every(Number.isFinite))
+          continue;
 
         bus.emit("market:top", {
           exchange: "bybit",
@@ -103,7 +112,7 @@ export class BybitPerpConnector {
           bidQty,
           askPrice,
           askQty,
-          ts
+          ts,
         });
       }
     });

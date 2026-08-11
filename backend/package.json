@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/main.ts",
+    "debug:watch": "node scripts/debug-watch.mjs",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/backend/src/main.js",
     "lint": "eslint .",

@@ -73,7 +73,7 @@ export class FundingOppEngine {
     const now = Date.now();
 
     for (const [id, opp] of this.oppsById.entries()) {
-      if (now - opp.observedAt > this.cfg.staleOppMs) {
+      if (now - opp.marketTs > this.cfg.staleOppMs) {
         this.oppsById.delete(id);
         this.aliveSince.delete(id);
       }
@@ -146,7 +146,9 @@ export class FundingOppEngine {
           entryCostBps,
           longTopQty: long.askQty,
           shortTopQty: short.bidQty,
-          observedAt: now,
+          marketTs: Math.min(long.ts, short.ts),
+          longMarketTs: long.ts,
+          shortMarketTs: short.ts,
           timeAliveMs
         };
 

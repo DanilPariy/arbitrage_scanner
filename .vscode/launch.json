@@ -22,15 +22,20 @@
             "skipFiles": ["<node_internals>/**"]
         },
         {
-            "name": "Launch TS (tsx) Debug",
+            "name": "Backend: Debug Watch (tsx)",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "node",
-            "runtimeArgs": ["--inspect=9229", "--enable-source-maps"],
+            "runtimeExecutable": "npm.cmd",
+            "runtimeArgs": [
+                "run",
+                "debug:watch"
+            ],
             "cwd": "${workspaceFolder}/backend",
-            "program": "${workspaceFolder}/backend/node_modules/tsx/dist/cli.mjs",
-            "args": ["src/main.ts"],
             "console": "integratedTerminal",
+            "sourceMaps": true,
+            "smartStep": true,
+            "restart": true,
+            "autoAttachChildProcesses": true,
             "outputCapture": "std",
             "skipFiles": ["<node_internals>/**"]
         }

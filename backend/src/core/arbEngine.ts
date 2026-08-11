@@ -80,7 +80,7 @@ export class ArbEngine {
 
     // Remove stale opps (haven’t been refreshed recently)
     for (const [id, opp] of this.oppsById.entries()) {
-      if (now - opp.observedAt > this.cfg.staleOppMs) {
+      if (now - opp.marketTs > this.cfg.staleOppMs) {
         this.oppsById.delete(id);
         this.aliveSince.delete(id);
       }
@@ -168,7 +168,9 @@ export class ArbEngine {
           netEdgeBps,
           longTopQty: long.askQty,
           shortTopQty: short.bidQty,
-          observedAt: now,
+          marketTs: Math.min(long.ts, short.ts),
+          longMarketTs: long.ts,
+          shortMarketTs: short.ts,
           timeAliveMs,
           longFundingRate: longRate,
           longNextFundingTime: longTime,

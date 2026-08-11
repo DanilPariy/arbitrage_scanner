@@ -121,7 +121,9 @@ export default function Page() {
       { header: "Entry cost (bps)", accessorKey: "entryCostBps", cell: (ctx) => fmt(ctx.getValue<number>(), 2) },
 
       { header: "Alive", accessorKey: "timeAliveMs", cell: (ctx) => `${Math.floor(ctx.getValue<number>() / 1000)}s` },
-      { header: "Seen", accessorKey: "observedAt", cell: (ctx) => ageMs(ctx.getValue<number>()) }
+      { header: "Seen", accessorKey: "marketTs", cell: (ctx) => ageMs(ctx.getValue<number>()) },
+      { header: "Long seen", accessorKey: "longMarketTs", cell: (ctx) => ageMs(ctx.getValue<number>()) },
+      { header: "Short seen", accessorKey: "shortMarketTs", cell: (ctx) => ageMs(ctx.getValue<number>()) }
     ],
     []
   );

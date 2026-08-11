@@ -117,29 +117,30 @@ export class BinancePerpConnector implements ExchangeConnector<AppEvents> {
   }
 
   private handleBookTicker(data: BinanceBookTicker) {
-  if (!this.bus) return;
-  if (!data?.s) return;
+    if (!this.bus) return;
+    if (!data?.s) return;
 
-  const parsed = parseBinanceUsdMPerpSymbol(data.s);
-  if (!parsed) return; // ignore unknown symbols (or log later)
+    const parsed = parseBinanceUsdMPerpSymbol(data.s);
+    if (!parsed) return; // ignore unknown symbols (or log later)
 
-  const bidPrice = toNum(data.b);
-  const bidQty = toNum(data.B);
-  const askPrice = toNum(data.a);
-  const askQty = toNum(data.A);
-  const ts = typeof data.E === "number" ? data.E : Date.now();
+    const bidPrice = toNum(data.b);
+    const bidQty = toNum(data.B);
+    const askPrice = toNum(data.a);
+    const askQty = toNum(data.A);
+    const ts = toNum(data.E);
 
-  if (![bidPrice, bidQty, askPrice, askQty].every(Number.isFinite)) return;
+    if (![bidPrice, bidQty, askPrice, askQty, ts].every(Number.isFinite))
+      return;
 
-  this.bus.emit("market:top", {
-    exchange: "binance",
-    symbol: parsed.canonical,     // ✅ normalized
-    exchangeSymbol: data.s,       // ✅ raw
-    bidPrice,
-    bidQty,
-    askPrice,
-    askQty,
-    ts
-  });
-}
+    this.bus.emit("market:top", {
+      exchange: "binance",
+      symbol: parsed.canonical, // ✅ normalized
+      exchangeSymbol: data.s, // ✅ raw
+      bidPrice,
+      bidQty,
+      askPrice,
+      askQty,
+      ts,
+    });
+  }
 }

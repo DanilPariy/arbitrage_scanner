@@ -133,9 +133,10 @@ export class BitgetPerpConnector {
         const askPrice = pickNum(row, ["askPr", "askPx", "bestAsk", "askPrice", "ask"]);
         const bidQty = pickNum(row, ["bidSz", "bidSize", "bidQty"]);
         const askQty = pickNum(row, ["askSz", "askSize", "askQty"]);
-        const ts = pickNum(row, ["ts", "timestamp"]) || Date.now();
+        const ts = pickNum(row, ["ts", "timestamp"]);
 
-        if (![bidPrice, bidQty, askPrice, askQty].every(Number.isFinite)) continue;
+        if (![bidPrice, bidQty, askPrice, askQty, ts].every(Number.isFinite))
+          continue;
 
         bus.emit("market:top", {
           exchange: "bitget",
