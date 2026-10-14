@@ -8,6 +8,7 @@
     "debug:watch": "node scripts/debug-watch.mjs",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/backend/src/main.js",
+    "test": "tsx --test src/core/*.test.ts",
     "lint": "eslint .",
     "format": "prettier -w .",
     "typecheck:backend": "tsc -p tsconfig.json --noEmit",
