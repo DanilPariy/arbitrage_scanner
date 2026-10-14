@@ -113,7 +113,6 @@ Useful commands:
 ```bash
 npm test
 npm run typecheck:backend
-npm run lint
 npm run build
 ```
 
@@ -154,7 +153,7 @@ SSE connections receive an initial snapshot, incremental opportunity updates, an
 
 ## Tests and CI
 
-The backend contains focused tests for the exchange-symbol normalization rules, fee calculations, and core arbitrage-engine behavior. GitHub Actions runs backend tests/typechecking and frontend typechecking/linting on pushes and pull requests.
+The backend contains focused tests for the exchange-symbol normalization rules, fee calculations, and core arbitrage-engine behavior. GitHub Actions runs backend tests/typechecking/builds and frontend typechecking/linting/builds on pushes and pull requests.
 
 ## Design choices
 
